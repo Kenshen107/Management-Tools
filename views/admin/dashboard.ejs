@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Notices - Management Tools</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <a class="brand" href="/admin">Management Tools</a>
+    <form method="post" action="/admin/logout"><button type="submit" class="secondary">Sign out</button></form>
+  </div>
+  <div class="wrap">
+    <h1>Notices</h1>
+    <p class="muted">Each notice can contain multiple topics. Every topic needs its own separate sign-off before an employee is counted as done.</p>
+    <a class="btn" href="/admin/notices/new">+ New notice</a>
+
+    <% if (notices.length === 0) { %>
+      <div class="card"><p class="muted">No notices yet. Create one to get started.</p></div>
+    <% } %>
+
+    <% notices.forEach(({ notice, topicCount, recipientCount, completed }) => { %>
+      <div class="card">
+        <h3><a href="/admin/notices/<%= notice.id %>"><%= notice.title %></a></h3>
+        <p class="muted">
+          <%= topicCount %> topic<%= topicCount === 1 ? '' : 's' %> ·
+          <%= recipientCount %> recipient<%= recipientCount === 1 ? '' : 's' %> ·
+          <%= completed %>/<%= recipientCount %> fully signed off
+        </p>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title><%= notice.title %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="topbar">
+    <span class="brand">Read &amp; confirm</span>
+  </div>
+  <div class="wrap">
+    <h1><%= notice.title %></h1>
+    <p class="muted">
+      From <%= notice.senderName || 'your manager' %> · Sent to <%= employee ? employee.name : '' %>
+    </p>
+    <% if (notice.description) { %><div class="card"><p><%= notice.description %></p></div><% } %>
+
+    <% if (allDone) { %>
+      <div class="success">You've reviewed and signed off on every topic in this notice. Thank you — nothing else to do here.</div>
+    <% } else { %>
+      <p class="muted">Please read each topic below in full, then type the confirmation text shown to sign off on it. You'll need to sign off on each topic separately.</p>
+    <% } %>
+
+    <% topics.forEach((topic, i) => {
+         const c = byTopicId[topic.id];
+         const confirmed = c && c.confirmedAt;
+    %>
+      <div class="topic <%= confirmed ? 'confirmed' : '' %>" data-topic-id="<%= topic.id %>" data-required-phrase="<%= topic.signOffPrompt %>">
+        <div class="topic-header">
+          <h3 style="margin:0;"><%= i + 1 %>. <%= topic.title %></h3>
+          <% if (confirmed) { %>
+            <span class="badge good">Signed off</span>
+          <% } else { %>
+            <span class="badge neutral">Not signed off yet</span>
+          <% } %>
+        </div>
+        <div class="topic-body" data-topic-body>
+          <%= topic.body %>
+        </div>
+        <div class="topic-footer">
+          <% if (confirmed) { %>
+            <p class="muted">
+              Signed "<%= c.signatureText %>" on <%= new Date(c.confirmedAt).toLocaleString() %>.
+            </p>
+          <% } else { %>
+            <p class="scroll-hint" data-scroll-hint>Scroll to the bottom of the topic above to unlock sign-off.</p>
+            <label>Type exactly: "<%= topic.signOffPrompt %>"</label>
+            <input type="text" data-signature-input disabled placeholder="Type the confirmation shown above">
+            <div data-error class="error" style="display:none;"></div>
+            <button type="button" data-confirm-btn disabled>Sign off on this topic</button>
+          <% } %>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+  <script src="/js/confirm.js" data-token="<%= token %>"></script>
+</body>
+</html>
