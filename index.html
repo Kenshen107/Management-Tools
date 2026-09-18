@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team Notice Builder</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --card: #ffffff;
+    --ink: #1f2430;
+    --muted: #6b7280;
+    --border: #e2e5ea;
+    --brand: #2563eb;
+    --brand-dark: #1d4ed8;
+    --good: #16a34a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+  }
+  header h1 { margin: 0; font-size: 1.25rem; }
+  header p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1300px;
+    margin: 20px auto;
+    padding: 0 20px 60px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+
+  label { display: block; font-weight: 600; margin: 12px 0 6px; font-size: 0.85rem; color: #374151; }
+  label.first { margin-top: 0; }
+  input[type=text], input[type=date], textarea {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: #fff;
+  }
+  textarea { min-height: 80px; resize: vertical; }
+  small.hint { color: var(--muted); display: block; margin-top: 4px; font-size: 0.8rem; }
+
+  button {
+    display: inline-block;
+    background: var(--brand);
+    color: #fff;
+    border: none;
+    padding: 9px 15px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  button:hover { background: var(--brand-dark); }
+  button.secondary { background: #fff; color: var(--ink); border: 1px solid var(--border); }
+  button.danger { background: #fff; color: #dc2626; border: 1px solid var(--border); padding: 5px 10px; font-size: 0.8rem; }
+  button.ghost { background: transparent; color: var(--brand); border: none; padding: 4px 6px; font-size: 0.85rem; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+  .topic {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    background: #fafbfc;
+  }
+  .topic-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .topic-head span { font-weight: 700; color: var(--muted); font-size: 0.85rem; }
+
+  #topicsList:empty::after {
+    content: "No topics yet — add your first one below.";
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .preview {
+    position: sticky;
+    top: 20px;
+  }
+  .preview-subject {
+    font-weight: 700;
+    font-size: 1.05rem;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .preview-body {
+    white-space: pre-wrap;
+    font-size: 0.92rem;
+    max-height: 65vh;
+    overflow-y: auto;
+  }
+  .copied-flash {
+    color: var(--good);
+    font-size: 0.85rem;
+    margin-left: 8px;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .copied-flash.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Team Notice Builder</h1>
+  <p>Turn a list of topics into one well-structured email — each topic gets its own explicit ask for your team to confirm back that they read and understood it.</p>
+</header>
+
+<div class="layout">
+  <div>
+    <div class="card">
+      <label class="first" for="subject">Subject line</label>
+      <input type="text" id="subject" placeholder="e.g. Team update — please read and reply">
+
+      <label for="sender">Your name (for the sign-off)</label>
+      <input type="text" id="sender" placeholder="e.g. Jordan">
+
+      <label for="intro">Opening note (optional)</label>
+      <textarea id="intro" placeholder="A sentence or two of context before the topics — e.g. why you're sending this."></textarea>
+
+      <label for="deadline">Reply-by date (optional)</label>
+      <input type="date" id="deadline">
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content: space-between;">
+        <h3 style="margin:0;">Topics</h3>
+        <button type="button" id="addTopic">+ Add topic</button>
+      </div>
+      <p class="hint" style="margin-top:6px;">Add one entry per thing you need covered — a policy update, a quality issue, a process change. Each one gets its own line in the reply checklist at the bottom of the email.</p>
+      <div id="topicsList"></div>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <button type="button" id="clearAll" class="secondary">Clear everything</button>
+        <span class="hint" style="margin:0;">Your draft is saved automatically in this browser.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="preview">
+    <div class="card">
+      <div class="row" style="justify-content: space-between;">
+        <h3 style="margin:0;">Preview</h3>
+        <div class="row">
+          <button type="button" id="copySubject" class="secondary">Copy subject</button>
+          <button type="button" id="copyBody" class="secondary">Copy body</button>
+          <button type="button" id="downloadTxt" class="secondary">Download .txt</button>
+          <span class="copied-flash" id="copiedFlash">Copied!</span>
+        </div>
+      </div>
+      <div class="preview-subject" id="previewSubject"></div>
+      <div class="preview-body" id="previewBody"></div>
+    </div>
+  </div>
+</div>
+
+<template id="topicTemplate">
+  <div class="topic" data-topic>
+    <div class="topic-head">
+      <span data-topic-number></span>
+      <button type="button" class="danger" data-remove>Remove</button>
+    </div>
+    <label class="first">Topic title</label>
+    <input type="text" data-field="title" placeholder="e.g. New QC checklist before shipping">
+    <label>What you need them to know</label>
+    <textarea data-field="content" placeholder="Explain the topic in full — this is what they need to actually read."></textarea>
+    <label>What they must confirm back to you</label>
+    <input type="text" data-field="confirm" placeholder="e.g. I will follow the new QC checklist on every order">
+    <small class="hint">Defaults to "Read and understood" if left blank.</small>
+  </div>
+</template>
+
+<script>
+(function () {
+  const STORAGE_KEY = 'team-notice-builder-draft-v1';
+
+  const subjectEl = document.getElementById('subject');
+  const senderEl = document.getElementById('sender');
+  const introEl = document.getElementById('intro');
+  const deadlineEl = document.getElementById('deadline');
+  const topicsList = document.getElementById('topicsList');
+  const addTopicBtn = document.getElementById('addTopic');
+  const clearAllBtn = document.getElementById('clearAll');
+  const template = document.getElementById('topicTemplate');
+  const previewSubject = document.getElementById('previewSubject');
+  const previewBody = document.getElementById('previewBody');
+  const copiedFlash = document.getElementById('copiedFlash');
+
+  function addTopic(data) {
+    const node = template.content.firstElementChild.cloneNode(true);
+    node.querySelector('[data-field="title"]').value = data?.title || '';
+    node.querySelector('[data-field="content"]').value = data?.content || '';
+    node.querySelector('[data-field="confirm"]').value = data?.confirm || '';
+    node.querySelector('[data-remove]').addEventListener('click', () => {
+      node.remove();
+      renumberTopics();
+      onChange();
+    });
+    node.querySelectorAll('input, textarea').forEach((el) => {
+      el.addEventListener('input', onChange);
+    });
+    topicsList.appendChild(node);
+    renumberTopics();
+  }
+
+  function renumberTopics() {
+    topicsList.querySelectorAll('[data-topic]').forEach((node, i) => {
+      node.querySelector('[data-topic-number]').textContent = 'Topic ' + (i + 1);
+    });
+  }
+
+  function getTopics() {
+    return Array.from(topicsList.querySelectorAll('[data-topic]')).map((node) => ({
+      title: node.querySelector('[data-field="title"]').value.trim(),
+      content: node.querySelector('[data-field="content"]').value.trim(),
+      confirm: node.querySelector('[data-field="confirm"]').value.trim(),
+    }));
+  }
+
+  function formatDeadline(value) {
+    if (!value) return '';
+    const d = new Date(value + 'T00:00:00');
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+  }
+
+  function buildEmail() {
+    const subject = subjectEl.value.trim() || 'Team update — please read and reply';
+    const sender = senderEl.value.trim();
+    const intro = introEl.value.trim();
+    const deadlineText = formatDeadline(deadlineEl.value);
+    const topics = getTopics().filter((t) => t.title || t.content);
+
+    let body = 'Hi team,\n\n';
+    if (intro) body += intro + '\n\n';
+
+    body += 'Please read everything below. When you\'re done, reply to this email and confirm each numbered item individually — don\'t just say "got it," actually reply to each one so I know it was read, not skimmed.\n\n';
+
+    if (topics.length === 0) {
+      body += '(Add topics on the left — they\'ll show up here, numbered, with their own confirmation ask.)\n\n';
+    } else {
+      topics.forEach((t, i) => {
+        body += (i + 1) + '. ' + (t.title || '(untitled topic)') + '\n';
+        if (t.content) body += t.content + '\n';
+        body += '\n';
+      });
+
+      body += '---\n';
+      body += 'Reply to this email with the following, copied and filled in:\n\n';
+      topics.forEach((t, i) => {
+        const ask = t.confirm || 'Read and understood';
+        body += (i + 1) + '. ' + (t.title || '(untitled topic)') + ' — ' + ask + ': [your confirmation here]\n';
+      });
+      body += '\n';
+    }
+
+    if (deadlineText) {
+      body += 'Please reply by ' + deadlineText + '.\n\n';
+    }
+
+    body += 'Thanks,\n' + (sender || '[Your name]');
+
+    return { subject, body };
+  }
+
+  function onChange() {
+    const { subject, body } = buildEmail();
+    previewSubject.textContent = subject;
+    previewBody.textContent = body;
+    saveDraft();
+  }
+
+  function saveDraft() {
+    try {
+      const draft = {
+        subject: subjectEl.value,
+        sender: senderEl.value,
+        intro: introEl.value,
+        deadline: deadlineEl.value,
+        topics: getTopics(),
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+    } catch (e) {
+      // Private browsing / storage disabled — not fatal, just no autosave.
+    }
+  }
+
+  function loadDraft() {
+    let draft = null;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) draft = JSON.parse(raw);
+    } catch (e) {
+      draft = null;
+    }
+    if (!draft) {
+      addTopic();
+      onChange();
+      return;
+    }
+    subjectEl.value = draft.subject || '';
+    senderEl.value = draft.sender || '';
+    introEl.value = draft.intro || '';
+    deadlineEl.value = draft.deadline || '';
+    (draft.topics && draft.topics.length ? draft.topics : [{}]).forEach(addTopic);
+    onChange();
+  }
+
+  function flashCopied() {
+    copiedFlash.classList.add('show');
+    setTimeout(() => copiedFlash.classList.remove('show'), 1400);
+  }
+
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      flashCopied();
+    } catch (e) {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); flashCopied(); } catch (err) { /* give up quietly */ }
+      document.body.removeChild(ta);
+    }
+  }
+
+  addTopicBtn.addEventListener('click', () => { addTopic(); onChange(); });
+
+  clearAllBtn.addEventListener('click', () => {
+    if (!confirm('Clear the subject, intro, and all topics? This can\'t be undone.')) return;
+    subjectEl.value = '';
+    senderEl.value = '';
+    introEl.value = '';
+    deadlineEl.value = '';
+    topicsList.innerHTML = '';
+    addTopic();
+    onChange();
+  });
+
+  [subjectEl, senderEl, introEl, deadlineEl].forEach((el) => el.addEventListener('input', onChange));
+
+  document.getElementById('copySubject').addEventListener('click', () => {
+    copyText(buildEmail().subject);
+  });
+  document.getElementById('copyBody').addEventListener('click', () => {
+    copyText(buildEmail().body);
+  });
+  document.getElementById('downloadTxt').addEventListener('click', () => {
+    const { subject, body } = buildEmail();
+    const blob = new Blob(['Subject: ' + subject + '\n\n' + body], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = (subject.replace(/[^a-z0-9]+/gi, '-').toLowerCase() || 'team-notice') + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  loadDraft();
+})();
+</script>
+</body>
+</html>
