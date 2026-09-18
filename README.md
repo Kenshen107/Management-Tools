@@ -11,16 +11,22 @@ No install, no server, no account. Open `index.html` in a browser and use it.
 1. Fill in a subject line, your name, and an optional opening note.
 2. Add a topic for each thing you need covered — a quality issue, a policy
    change, a reminder, whatever's on your list. Each topic has:
-   - a title
-   - the actual content you need them to read
-   - what you want them to confirm back (defaults to "Read and understood")
-3. The right-hand preview assembles everything into one email: your topics
-   numbered in order, followed by a reply checklist that restates each
-   topic's specific confirmation ask so your team can copy it into their
-   reply and fill it in.
-4. Copy the subject and body into your email client (or download as a
-   `.txt` file) and send it yourself, to the whole team, the way you
-   normally would.
+   - a title and the content you need them to read
+   - optional step-by-step instructions (hit "+ Add step" as many times as
+     you need)
+   - an optional link — check "Include a link," paste in the label and web
+     address, and it's inserted as a clickable link in the email
+   - the exact line you want them to reply with to confirm that topic
+     (defaults to "Read and understood")
+3. The right-hand preview renders the actual email: bold topic titles,
+   numbered steps, and a highlighted "How to confirm" box at the bottom
+   that spells out, per topic, the exact phrase you want back — no more
+   open-ended blanks your team has to guess how to fill in.
+4. Hit "Copy body" and paste into Gmail/Outlook/etc. — the bold formatting
+   carries over into rich-text compose windows automatically (falls back to
+   clean plain text if you paste somewhere that doesn't support it), or use
+   "Download .txt" for a plain-text file. Send it yourself, to the whole
+   team, the way you normally would.
 
 Your draft is autosaved in the browser (via `localStorage`) so refreshing
 the page won't lose your work, but nothing is uploaded anywhere — it's all

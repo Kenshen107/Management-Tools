@@ -4,97 +4,177 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Team Notice Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f5f6f8;
+    --bg: #f3f5f8;
     --card: #ffffff;
-    --ink: #1f2430;
-    --muted: #6b7280;
-    --border: #e2e5ea;
-    --brand: #2563eb;
-    --brand-dark: #1d4ed8;
+    --ink: #1c2130;
+    --muted: #667085;
+    --border: #e3e7ee;
+    --brand: #2554e0;
+    --brand-dark: #1a3fb8;
+    --brand-tint: #eaf0ff;
     --good: #16a34a;
+    --danger: #dc2626;
+    --mono-bg: #f7f8fa;
   }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151b;
+      --card: #1a1e26;
+      --ink: #eef0f4;
+      --muted: #97a0b3;
+      --border: #2b303c;
+      --brand: #6d93ff;
+      --brand-dark: #8caaff;
+      --brand-tint: #1c2740;
+      --good: #4ade80;
+      --danger: #f87171;
+      --mono-bg: #14171e;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12151b;
+    --card: #1a1e26;
+    --ink: #eef0f4;
+    --muted: #97a0b3;
+    --border: #2b303c;
+    --brand: #6d93ff;
+    --brand-dark: #8caaff;
+    --brand-tint: #1c2740;
+    --good: #4ade80;
+    --danger: #f87171;
+    --mono-bg: #14171e;
+  }
+
   * { box-sizing: border-box; }
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     background: var(--bg);
     color: var(--ink);
-    line-height: 1.5;
+    line-height: 1.55;
   }
+  h1, h2, h3, .display { font-family: 'Manrope', 'Inter', sans-serif; letter-spacing: -0.01em; }
+
   header {
     background: var(--card);
     border-bottom: 1px solid var(--border);
-    padding: 16px 24px;
+    padding: 22px 24px;
   }
-  header h1 { margin: 0; font-size: 1.25rem; }
-  header p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
+  header h1 { margin: 0; font-size: 1.5rem; font-weight: 800; }
+  header p { margin: 6px 0 0; color: var(--muted); font-size: 0.95rem; max-width: 62ch; }
 
   .layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
-    max-width: 1300px;
-    margin: 20px auto;
+    max-width: 1360px;
+    margin: 22px auto;
     padding: 0 20px 60px;
     align-items: start;
   }
-  @media (max-width: 900px) {
+  @media (max-width: 940px) {
     .layout { grid-template-columns: 1fr; }
   }
 
   .card {
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px 20px;
-    margin-bottom: 16px;
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin-bottom: 18px;
   }
 
-  label { display: block; font-weight: 600; margin: 12px 0 6px; font-size: 0.85rem; color: #374151; }
+  .eyebrow {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--brand);
+    margin: 0 0 4px;
+  }
+  h3.section-title { margin: 0; font-size: 1.15rem; font-weight: 800; }
+  .section-sub { color: var(--muted); font-size: 0.86rem; margin: 6px 0 14px; }
+
+  label { display: block; font-weight: 600; margin: 14px 0 6px; font-size: 0.84rem; color: var(--muted); }
   label.first { margin-top: 0; }
-  input[type=text], input[type=date], textarea {
+  input[type=text], input[type=url], input[type=date], textarea {
     width: 100%;
-    padding: 9px 11px;
+    padding: 10px 12px;
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 0.95rem;
     font-family: inherit;
-    background: #fff;
+    background: var(--bg);
+    color: var(--ink);
   }
-  textarea { min-height: 80px; resize: vertical; }
-  small.hint { color: var(--muted); display: block; margin-top: 4px; font-size: 0.8rem; }
+  input:focus, textarea:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
+  input::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.65; }
+  textarea { min-height: 76px; resize: vertical; }
+  small.hint { color: var(--muted); display: block; margin-top: 5px; font-size: 0.78rem; }
 
   button {
     display: inline-block;
     background: var(--brand);
     color: #fff;
     border: none;
-    padding: 9px 15px;
-    border-radius: 6px;
-    font-size: 0.9rem;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
     cursor: pointer;
+    font-family: 'Manrope', sans-serif;
   }
   button:hover { background: var(--brand-dark); }
-  button.secondary { background: #fff; color: var(--ink); border: 1px solid var(--border); }
-  button.danger { background: #fff; color: #dc2626; border: 1px solid var(--border); padding: 5px 10px; font-size: 0.8rem; }
-  button.ghost { background: transparent; color: var(--brand); border: none; padding: 4px 6px; font-size: 0.85rem; }
+  button.secondary { background: var(--brand-tint); color: var(--brand-dark); border: 1px solid var(--border); }
+  button.danger { background: transparent; color: var(--danger); border: 1px solid var(--border); padding: 6px 11px; font-size: 0.78rem; }
+  button.ghost { background: transparent; color: var(--brand); border: 1px dashed var(--border); padding: 7px 12px; font-size: 0.82rem; width: 100%; }
+  button.ghost:hover { background: var(--brand-tint); }
+  button.step-remove { background: transparent; color: var(--muted); border: none; padding: 4px 8px; font-size: 0.9rem; font-weight: 400; }
   .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
   .topic {
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-    background: #fafbfc;
+    border-radius: 12px;
+    padding: 16px 18px 18px;
+    margin-bottom: 16px;
+    background: var(--bg);
   }
   .topic-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 4px;
   }
-  .topic-head span { font-weight: 700; color: var(--muted); font-size: 0.85rem; }
+  .topic-head span { font-family: 'Manrope', sans-serif; font-weight: 800; color: var(--brand); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .checkbox-row { display: flex; align-items: center; gap: 8px; margin: 12px 0 0; }
+  .checkbox-row input[type=checkbox] { width: 17px; height: 17px; accent-color: var(--brand); }
+  .checkbox-row label { margin: 0; font-size: 0.86rem; font-weight: 600; color: var(--ink); }
+  .link-fields { display: none; gap: 10px; margin-top: 10px; padding: 12px; border: 1px dashed var(--border); border-radius: 8px; }
+  .link-fields.show { display: grid; grid-template-columns: 1fr 1.4fr; }
+  @media (max-width: 520px) { .link-fields.show { grid-template-columns: 1fr; } }
+  .link-fields > div label { margin-top: 0; }
+
+  .steps-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+  .step-row { display: flex; align-items: center; gap: 8px; }
+  .step-num {
+    flex: 0 0 auto;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 0.78rem;
+    color: var(--brand);
+    background: var(--brand-tint);
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .step-row input { flex: 1 1 auto; }
 
   #topicsList:empty::after {
     content: "No topics yet — add your first one below.";
@@ -102,43 +182,61 @@
     font-size: 0.9rem;
   }
 
-  .preview {
-    position: sticky;
-    top: 20px;
-  }
-  .preview-subject {
-    font-weight: 700;
-    font-size: 1.05rem;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid var(--border);
-  }
-  .preview-body {
-    white-space: pre-wrap;
-    font-size: 0.92rem;
-    max-height: 65vh;
-    overflow-y: auto;
-  }
-  .copied-flash {
-    color: var(--good);
-    font-size: 0.85rem;
-    margin-left: 8px;
-    opacity: 0;
-    transition: opacity .2s;
-  }
+  .preview { position: sticky; top: 20px; }
+  .preview-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+  .copied-flash { color: var(--good); font-size: 0.84rem; font-weight: 600; opacity: 0; transition: opacity .2s; }
   .copied-flash.show { opacity: 1; }
+
+  .email-paper {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--card);
+  }
+  .email-meta {
+    background: var(--mono-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 18px;
+    font-size: 0.86rem;
+  }
+  .email-meta .meta-row { display: flex; gap: 8px; margin-bottom: 3px; }
+  .email-meta .meta-label { color: var(--muted); font-weight: 600; width: 56px; flex: 0 0 auto; }
+  .email-meta .meta-value { font-weight: 700; }
+  .email-body { padding: 20px 22px; max-height: 62vh; overflow-y: auto; font-size: 0.95rem; }
+  .email-body p { margin: 0 0 12px; }
+  .email-topic { margin: 0 0 22px; }
+  .email-topic:last-child { margin-bottom: 0; }
+  .email-topic-title { font-family: 'Manrope', sans-serif; font-size: 1.08rem; font-weight: 800; margin: 0 0 8px; }
+  .email-topic-title .num { color: var(--brand); }
+  .email-steps { margin: 0 0 10px; padding-left: 22px; }
+  .email-steps li { margin-bottom: 5px; }
+  .email-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--brand); text-decoration: none; }
+  .confirm-box {
+    margin-top: 6px;
+    padding: 16px 18px;
+    background: var(--brand-tint);
+    border-left: 4px solid var(--brand);
+    border-radius: 8px;
+  }
+  .confirm-box .confirm-title { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 1rem; margin: 0 0 8px; }
+  .confirm-item { margin: 0 0 10px; font-size: 0.93rem; }
+  .confirm-item:last-child { margin-bottom: 0; }
+  .confirm-item .ctitle { font-weight: 700; }
+  .confirm-item .cphrase { font-weight: 700; color: var(--brand-dark); }
 </style>
 </head>
 <body>
 
+
 <header>
   <h1>Team Notice Builder</h1>
-  <p>Turn a list of topics into one well-structured email — each topic gets its own explicit ask for your team to confirm back that they read and understood it.</p>
+  <p>Turn a list of topics into one clearly structured email — each topic gets its own steps, links, and an explicit reply your team has to send back to confirm they read it.</p>
 </header>
 
 <div class="layout">
   <div>
     <div class="card">
+      <p class="eyebrow">Message details</p>
       <label class="first" for="subject">Subject line</label>
       <input type="text" id="subject" placeholder="e.g. Team update — please read and reply">
 
@@ -153,11 +251,14 @@
     </div>
 
     <div class="card">
-      <div class="row" style="justify-content: space-between;">
-        <h3 style="margin:0;">Topics</h3>
+      <div class="row" style="justify-content: space-between; align-items: flex-start;">
+        <div>
+          <p class="eyebrow">Topics</p>
+          <h3 class="section-title">What you need covered</h3>
+        </div>
         <button type="button" id="addTopic">+ Add topic</button>
       </div>
-      <p class="hint" style="margin-top:6px;">Add one entry per thing you need covered — a policy update, a quality issue, a process change. Each one gets its own line in the reply checklist at the bottom of the email.</p>
+      <p class="section-sub">Each topic can include step-by-step instructions and a link, and always ends up with its own line in the confirmation checklist below.</p>
       <div id="topicsList"></div>
     </div>
 
@@ -171,17 +272,26 @@
 
   <div class="preview">
     <div class="card">
-      <div class="row" style="justify-content: space-between;">
-        <h3 style="margin:0;">Preview</h3>
+      <div class="preview-toolbar">
+        <div>
+          <p class="eyebrow" style="margin-bottom:2px;">Preview</p>
+          <h3 class="section-title" style="font-size:1rem;">How your team will see it</h3>
+        </div>
         <div class="row">
           <button type="button" id="copySubject" class="secondary">Copy subject</button>
           <button type="button" id="copyBody" class="secondary">Copy body</button>
           <button type="button" id="downloadTxt" class="secondary">Download .txt</button>
-          <span class="copied-flash" id="copiedFlash">Copied!</span>
         </div>
       </div>
-      <div class="preview-subject" id="previewSubject"></div>
-      <div class="preview-body" id="previewBody"></div>
+      <p class="hint" style="margin:-6px 0 14px;">"Copy body" carries the bold formatting with it if you paste into Gmail or Outlook. Pasting into a plain text field falls back to clean plain text automatically.</p>
+      <div class="email-paper">
+        <div class="email-meta">
+          <div class="meta-row"><span class="meta-label">To:</span><span class="meta-value">Your team</span></div>
+          <div class="meta-row"><span class="meta-label">Subject:</span><span class="meta-value" id="previewSubject"></span></div>
+        </div>
+        <div class="email-body" id="previewBody"></div>
+      </div>
+      <span class="copied-flash" id="copiedFlash">Copied to clipboard</span>
     </div>
   </div>
 </div>
@@ -190,21 +300,52 @@
   <div class="topic" data-topic>
     <div class="topic-head">
       <span data-topic-number></span>
-      <button type="button" class="danger" data-remove>Remove</button>
+      <button type="button" class="danger" data-remove>Remove topic</button>
     </div>
     <label class="first">Topic title</label>
     <input type="text" data-field="title" placeholder="e.g. New QC checklist before shipping">
+
     <label>What you need them to know</label>
-    <textarea data-field="content" placeholder="Explain the topic in full — this is what they need to actually read."></textarea>
-    <label>What they must confirm back to you</label>
+    <textarea data-field="content" placeholder="Explain the topic — this is the main thing they need to read."></textarea>
+
+    <div>
+      <label style="margin-bottom:4px;">Steps (optional)</label>
+      <div class="steps-list" data-steps-list></div>
+      <button type="button" class="ghost" data-add-step style="margin-top:8px;">+ Add step</button>
+    </div>
+
+    <div class="checkbox-row">
+      <input type="checkbox" data-link-toggle id="">
+      <label>Include a link</label>
+    </div>
+    <div class="link-fields" data-link-fields>
+      <div>
+        <label class="first">Link text</label>
+        <input type="text" data-field="linkLabel" placeholder="e.g. New QC form">
+      </div>
+      <div>
+        <label class="first">Web address</label>
+        <input type="url" data-field="linkUrl" placeholder="https://">
+      </div>
+    </div>
+
+    <label>Exact reply you want back to confirm this topic</label>
     <input type="text" data-field="confirm" placeholder="e.g. I will follow the new QC checklist on every order">
-    <small class="hint">Defaults to "Read and understood" if left blank.</small>
+    <small class="hint">This is the exact line they'll be told to reply with. Defaults to "Read and understood" if left blank.</small>
+  </div>
+</template>
+
+<template id="stepTemplate">
+  <div class="step-row" data-step-row>
+    <span class="step-num" data-step-num>1</span>
+    <input type="text" data-step-input placeholder="Describe this step">
+    <button type="button" class="step-remove" data-step-remove title="Remove step">✕</button>
   </div>
 </template>
 
 <script>
 (function () {
-  const STORAGE_KEY = 'team-notice-builder-draft-v1';
+  const STORAGE_KEY = 'team-notice-builder-draft-v2';
 
   const subjectEl = document.getElementById('subject');
   const senderEl = document.getElementById('sender');
@@ -213,26 +354,84 @@
   const topicsList = document.getElementById('topicsList');
   const addTopicBtn = document.getElementById('addTopic');
   const clearAllBtn = document.getElementById('clearAll');
-  const template = document.getElementById('topicTemplate');
+  const topicTemplate = document.getElementById('topicTemplate');
+  const stepTemplate = document.getElementById('stepTemplate');
   const previewSubject = document.getElementById('previewSubject');
   const previewBody = document.getElementById('previewBody');
   const copiedFlash = document.getElementById('copiedFlash');
 
+  function escapeHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function nl2br(str) {
+    return escapeHtml(str).replace(/\n/g, '<br>');
+  }
+
+  // ---- Steps ----
+
+  function addStepRow(topicNode, value) {
+    const node = stepTemplate.content.firstElementChild.cloneNode(true);
+    node.querySelector('[data-step-input]').value = value || '';
+    node.querySelector('[data-step-remove]').addEventListener('click', () => {
+      node.remove();
+      renumberSteps(topicNode);
+      onChange();
+    });
+    node.querySelector('[data-step-input]').addEventListener('input', onChange);
+    topicNode.querySelector('[data-steps-list]').appendChild(node);
+    renumberSteps(topicNode);
+  }
+
+  function renumberSteps(topicNode) {
+    topicNode.querySelectorAll('[data-step-row]').forEach((row, i) => {
+      row.querySelector('[data-step-num]').textContent = i + 1;
+    });
+  }
+
+  // ---- Topics ----
+
   function addTopic(data) {
-    const node = template.content.firstElementChild.cloneNode(true);
+    const node = topicTemplate.content.firstElementChild.cloneNode(true);
     node.querySelector('[data-field="title"]').value = data?.title || '';
     node.querySelector('[data-field="content"]').value = data?.content || '';
+    node.querySelector('[data-field="linkLabel"]').value = data?.linkLabel || '';
+    node.querySelector('[data-field="linkUrl"]').value = data?.linkUrl || '';
     node.querySelector('[data-field="confirm"]').value = data?.confirm || '';
+
+    const linkToggle = node.querySelector('[data-link-toggle]');
+    const linkFields = node.querySelector('[data-link-fields]');
+    linkToggle.checked = Boolean(data?.linkEnabled);
+    linkFields.classList.toggle('show', linkToggle.checked);
+    linkToggle.addEventListener('change', () => {
+      linkFields.classList.toggle('show', linkToggle.checked);
+      onChange();
+    });
+
     node.querySelector('[data-remove]').addEventListener('click', () => {
       node.remove();
       renumberTopics();
       onChange();
     });
+
     node.querySelectorAll('input, textarea').forEach((el) => {
+      if (el.hasAttribute('data-step-input')) return;
       el.addEventListener('input', onChange);
     });
+
+    node.querySelector('[data-add-step]').addEventListener('click', () => {
+      addStepRow(node);
+      onChange();
+    });
+
     topicsList.appendChild(node);
     renumberTopics();
+
+    (data?.steps || []).forEach((s) => addStepRow(node, s));
   }
 
   function renumberTopics() {
@@ -245,9 +444,17 @@
     return Array.from(topicsList.querySelectorAll('[data-topic]')).map((node) => ({
       title: node.querySelector('[data-field="title"]').value.trim(),
       content: node.querySelector('[data-field="content"]').value.trim(),
+      steps: Array.from(node.querySelectorAll('[data-step-input]'))
+        .map((i) => i.value.trim())
+        .filter(Boolean),
+      linkEnabled: node.querySelector('[data-link-toggle]').checked,
+      linkLabel: node.querySelector('[data-field="linkLabel"]').value.trim(),
+      linkUrl: node.querySelector('[data-field="linkUrl"]').value.trim(),
       confirm: node.querySelector('[data-field="confirm"]').value.trim(),
     }));
   }
+
+  // ---- Email model + rendering ----
 
   function formatDeadline(value) {
     if (!value) return '';
@@ -256,51 +463,99 @@
     return d.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
   }
 
-  function buildEmail() {
+  function buildModel() {
     const subject = subjectEl.value.trim() || 'Team update — please read and reply';
     const sender = senderEl.value.trim();
     const intro = introEl.value.trim();
     const deadlineText = formatDeadline(deadlineEl.value);
-    const topics = getTopics().filter((t) => t.title || t.content);
+    const topics = getTopics().filter((t) => t.title || t.content || t.steps.length);
+    return { subject, sender, intro, deadlineText, topics };
+  }
 
-    let body = 'Hi team,\n\n';
-    if (intro) body += intro + '\n\n';
+  function renderHtml(model) {
+    let out = '<div>';
+    out += '<p>Hi team,</p>';
+    if (model.intro) out += '<p>' + nl2br(model.intro) + '</p>';
+    out += '<p>Please read everything below. When you’re done, reply to <strong>this email</strong> and send back the confirmation for each item — I need an actual reply for each one, not a single "got it."</p>';
 
-    body += 'Please read everything below. When you\'re done, reply to this email and confirm each numbered item individually — don\'t just say "got it," actually reply to each one so I know it was read, not skimmed.\n\n';
-
-    if (topics.length === 0) {
-      body += '(Add topics on the left — they\'ll show up here, numbered, with their own confirmation ask.)\n\n';
+    if (model.topics.length === 0) {
+      out += '<p style="color:#8a93a6;">(Add topics on the left — they’ll show up here, numbered, with their own confirmation line.)</p>';
     } else {
-      topics.forEach((t, i) => {
+      model.topics.forEach((t, i) => {
+        out += '<div class="email-topic">';
+        out += '<p class="email-topic-title"><span class="num">' + (i + 1) + '.</span> ' + escapeHtml(t.title || '(untitled topic)') + '</p>';
+        if (t.content) out += '<p>' + nl2br(t.content) + '</p>';
+        if (t.steps.length) {
+          out += '<ol class="email-steps">' + t.steps.map((s) => '<li>' + escapeHtml(s) + '</li>').join('') + '</ol>';
+        }
+        if (t.linkEnabled && t.linkUrl) {
+          out += '<p><a class="email-link" href="' + escapeHtml(t.linkUrl) + '">🔗 ' + escapeHtml(t.linkLabel || t.linkUrl) + '</a></p>';
+        }
+        out += '</div>';
+      });
+
+      out += '<div class="confirm-box">';
+      out += '<p class="confirm-title">How to confirm</p>';
+      out += '<p style="margin:0 0 12px;">Reply to this email with the following, one line per topic:</p>';
+      model.topics.forEach((t, i) => {
+        const phrase = t.confirm || 'Read and understood';
+        out += '<p class="confirm-item"><span class="ctitle">' + (i + 1) + '. ' + escapeHtml(t.title || '(untitled topic)') + '</span> — reply with: <span class="cphrase">&ldquo;' + escapeHtml(phrase) + '&rdquo;</span></p>';
+      });
+      out += '</div>';
+    }
+
+    if (model.deadlineText) {
+      out += '<p style="margin-top:16px;"><strong>Please reply by ' + escapeHtml(model.deadlineText) + '.</strong></p>';
+    }
+    out += '<p style="margin-top:18px;">Thanks,<br>' + escapeHtml(model.sender || '[Your name]') + '</p>';
+    out += '</div>';
+    return out;
+  }
+
+  function renderPlain(model) {
+    let body = 'Hi team,\n\n';
+    if (model.intro) body += model.intro + '\n\n';
+    body += 'Please read everything below. When you\'re done, reply to this email and send back the confirmation for each item — I need an actual reply for each one, not a single "got it."\n\n';
+
+    if (model.topics.length === 0) {
+      body += '(Add topics on the left — they\'ll show up here, numbered, with their own confirmation line.)\n\n';
+    } else {
+      model.topics.forEach((t, i) => {
         body += (i + 1) + '. ' + (t.title || '(untitled topic)') + '\n';
         if (t.content) body += t.content + '\n';
+        if (t.steps.length) {
+          t.steps.forEach((s, si) => { body += '   ' + (si + 1) + ') ' + s + '\n'; });
+        }
+        if (t.linkEnabled && t.linkUrl) {
+          body += '   Link: ' + (t.linkLabel ? t.linkLabel + ' — ' : '') + t.linkUrl + '\n';
+        }
         body += '\n';
       });
 
-      body += '---\n';
-      body += 'Reply to this email with the following, copied and filled in:\n\n';
-      topics.forEach((t, i) => {
-        const ask = t.confirm || 'Read and understood';
-        body += (i + 1) + '. ' + (t.title || '(untitled topic)') + ' — ' + ask + ': [your confirmation here]\n';
+      body += '----------------------------------------\n';
+      body += 'HOW TO CONFIRM\n';
+      body += 'Reply to this email with the following, one line per topic:\n\n';
+      model.topics.forEach((t, i) => {
+        const phrase = t.confirm || 'Read and understood';
+        body += (i + 1) + '. ' + (t.title || '(untitled topic)') + '\n';
+        body += '   Reply with: "' + phrase + '"\n';
       });
       body += '\n';
     }
 
-    if (deadlineText) {
-      body += 'Please reply by ' + deadlineText + '.\n\n';
-    }
-
-    body += 'Thanks,\n' + (sender || '[Your name]');
-
-    return { subject, body };
+    if (model.deadlineText) body += 'Please reply by ' + model.deadlineText + '.\n\n';
+    body += 'Thanks,\n' + (model.sender || '[Your name]');
+    return body;
   }
 
   function onChange() {
-    const { subject, body } = buildEmail();
-    previewSubject.textContent = subject;
-    previewBody.textContent = body;
+    const model = buildModel();
+    previewSubject.textContent = model.subject;
+    previewBody.innerHTML = renderHtml(model);
     saveDraft();
   }
+
+  // ---- Persistence ----
 
   function saveDraft() {
     try {
@@ -338,26 +593,48 @@
     onChange();
   }
 
-  function flashCopied() {
+  // ---- Copy actions ----
+
+  function flashCopied(msg) {
+    copiedFlash.textContent = msg || 'Copied to clipboard';
     copiedFlash.classList.add('show');
-    setTimeout(() => copiedFlash.classList.remove('show'), 1400);
+    setTimeout(() => copiedFlash.classList.remove('show'), 1800);
   }
 
-  async function copyText(text) {
+  async function copyPlain(text) {
     try {
       await navigator.clipboard.writeText(text);
-      flashCopied();
-    } catch (e) {
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      ta.style.position = 'fixed';
-      ta.style.opacity = '0';
-      document.body.appendChild(ta);
-      ta.select();
-      try { document.execCommand('copy'); flashCopied(); } catch (err) { /* give up quietly */ }
-      document.body.removeChild(ta);
-    }
+      flashCopied('Copied to clipboard');
+      return;
+    } catch (e) { /* fall through to legacy path */ }
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); flashCopied('Copied to clipboard'); } catch (err) { /* give up quietly */ }
+    document.body.removeChild(ta);
   }
+
+  async function copyRichBody(model) {
+    const html = renderHtml(model);
+    const text = renderPlain(model);
+    try {
+      if (window.ClipboardItem) {
+        const item = new ClipboardItem({
+          'text/html': new Blob([html], { type: 'text/html' }),
+          'text/plain': new Blob([text], { type: 'text/plain' }),
+        });
+        await navigator.clipboard.write([item]);
+        flashCopied('Copied — formatting carries into Gmail/Outlook');
+        return;
+      }
+    } catch (e) { /* fall through to plain copy */ }
+    await copyPlain(text);
+  }
+
+  // ---- Wiring ----
 
   addTopicBtn.addEventListener('click', () => { addTopic(); onChange(); });
 
@@ -375,18 +652,18 @@
   [subjectEl, senderEl, introEl, deadlineEl].forEach((el) => el.addEventListener('input', onChange));
 
   document.getElementById('copySubject').addEventListener('click', () => {
-    copyText(buildEmail().subject);
+    copyPlain(buildModel().subject);
   });
   document.getElementById('copyBody').addEventListener('click', () => {
-    copyText(buildEmail().body);
+    copyRichBody(buildModel());
   });
   document.getElementById('downloadTxt').addEventListener('click', () => {
-    const { subject, body } = buildEmail();
-    const blob = new Blob(['Subject: ' + subject + '\n\n' + body], { type: 'text/plain' });
+    const model = buildModel();
+    const blob = new Blob(['Subject: ' + model.subject + '\n\n' + renderPlain(model)], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = (subject.replace(/[^a-z0-9]+/gi, '-').toLowerCase() || 'team-notice') + '.txt';
+    a.download = (model.subject.replace(/[^a-z0-9]+/gi, '-').toLowerCase() || 'team-notice') + '.txt';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
